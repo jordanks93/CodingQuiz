@@ -6,7 +6,6 @@ var timer = document.querySelector("#timer")
 var highscoresButton = document.querySelector("#highscores")
 var enterScore = document.querySelector("#enterScore");
 var count = 75;
-var score = 0;
 var qCounter = 0;
 
 var questions =
@@ -76,6 +75,11 @@ function renderAnswers(num) {
     console.log(answerList.childElementCount);
 }
 
+// checks if answer is correct and adds to score
+function checkAnswer() {
+ 
+}
+
 // Clear answers and enter score elements to re-render the page
 function clearElements() {
 
@@ -109,7 +113,7 @@ function renderEnterScore() {
 
     text.textContent = "Enter initials:"
     question.textContent = "All done!";
-    details.textContent = "Your final score is " + score + ".";
+    details.textContent = "Your final score is " + count + ".";
     submit.textContent = "Submit";
 
     enterScore.appendChild(text);
@@ -145,13 +149,14 @@ answerList.addEventListener("click", function (event) {
         renderQuestion(qCounter);
         console.log(answerList);
     }
-    else { // BUG - clicking on highscore list element goes back to score screen
+    else { 
         renderEnterScore(); 
     }
 
 
 });
 
+// Checks button click for submitting a score, go back to the beginning, and clearing highscores
 enterScore.addEventListener("click", function (event) {
     var element = event.target;
     if (element.matches("button") === true && element.textContent === "Submit" ) {
