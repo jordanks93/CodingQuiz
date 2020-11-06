@@ -33,6 +33,7 @@ var answers5 = ["Javascript", "terminal/ bash", "for loops", "console log"];
 // When game is over, can save initials and score
 
 function renderAnswers(num) {
+    
     for (i = 0; i < answers1.length; i++) {
         var li = document.createElement("li");
         var button = document.createElement("button");
@@ -75,10 +76,14 @@ function renderAnswers(num) {
     console.log(answerList.childElementCount);
 }
 
-// Clear answers so they can be replaced when renderAnswers is called
-function clearAnswers() {
+// Clear answers and enter score elements to re-render the page
+function clearElements() {
+
     while (answerList.firstChild) {
         answerList.removeChild(answerList.firstChild);
+    }
+    while (enterScore.firstChild && enterScore.firstChild.textContent != "Go Back") {
+        enterScore.removeChild(enterScore.firstChild);
     }
 }
 
@@ -96,15 +101,18 @@ function renderQuestion(qNum) {
 
 // Creates page for player to enter score
 function renderEnterScore() {
-    clearAnswers();
+
+    clearElements();
+    var text = document.createElement("label");
     var input = document.createElement("input");
     var submit = document.createElement("button");
 
+    text.textContent = "Enter initials:"
     question.textContent = "All done!";
     details.textContent = "Your final score is " + score + ".";
-    input.value = "Enter Initials";
     submit.textContent = "Submit";
 
+    enterScore.appendChild(text);
     enterScore.appendChild(input);
     enterScore.appendChild(submit);
 }
@@ -112,6 +120,19 @@ function renderEnterScore() {
 // Creates page with list of highscores that can be cleared. Also has go back button to reset quiz
 function renderHighscore() {
 
+    var highscore = document.createElement("li");
+    var goBack = document.createElement("button");
+    var clearHighscore = document.createElement("button");
+
+    question.textContent = "Highscores";
+    details.textContent = "";
+    highscore.textContent = "testing";
+    goBack.textContent = "Go Back";
+    clearHighscore.textContent = "Clear Highscores";
+
+    answerList.appendChild(highscore);
+    enterScore.appendChild(goBack);
+    enterScore.appendChild(clearHighscore);
 }
 
 // Check for answer button click
@@ -120,16 +141,30 @@ answerList.addEventListener("click", function (event) {
 
     if (element.matches("button") === true && qCounter < questions.length - 1) {
         qCounter++;
-        clearAnswers();
+        clearElements();
         renderQuestion(qCounter);
         console.log(answerList);
     }
-    else {
-        renderEnterScore();
+    else { // BUG - clicking on highscore list element goes back to score screen
+        renderEnterScore(); 
     }
 
 
 });
+
+enterScore.addEventListener("click", function (event) {
+    var element = event.target;
+    if (element.matches("button") === true && element.textContent === "Submit" ) {
+        clearElements();
+        renderHighscore();
+    }
+    if (element.matches("button") === true && element.textContent === "Go Back") {
+        location.reload();
+    }
+    if (element.matches("button") === true && element.textContent === "Clear Highscores") {
+        clearElements();
+    }
+})
 
 // Start quiz
 startButton.addEventListener("click", function () {
