@@ -4,7 +4,9 @@ var startButton = document.querySelector("#startButton");
 var answerList = document.querySelector("#answerList");
 var timer = document.querySelector("#timer")
 var highscoresButton = document.querySelector("#highscores")
+var enterScore = document.querySelector("#enterScore");
 var count = 75;
+var score = 0;
 var qCounter = 0;
 
 var questions =
@@ -92,6 +94,26 @@ function renderQuestion(qNum) {
     renderAnswers(qNum);
 }
 
+// Creates page for player to enter score
+function renderEnterScore() {
+    clearAnswers();
+    var input = document.createElement("input");
+    var submit = document.createElement("button");
+
+    question.textContent = "All done!";
+    details.textContent = "Your final score is " + score + ".";
+    input.value = "Enter Initials";
+    submit.textContent = "Submit";
+
+    enterScore.appendChild(input);
+    enterScore.appendChild(submit);
+}
+
+// Creates page with list of highscores that can be cleared. Also has go back button to reset quiz
+function renderHighscore() {
+
+}
+
 // Check for answer button click
 answerList.addEventListener("click", function (event) {
     var element = event.target;
@@ -101,6 +123,9 @@ answerList.addEventListener("click", function (event) {
         clearAnswers();
         renderQuestion(qCounter);
         console.log(answerList);
+    }
+    else {
+        renderEnterScore();
     }
 
 
