@@ -8,6 +8,7 @@ var enterScore = document.querySelector("#enterScore");
 var showIfCorrect = document.querySelector("#showIfCorrect");
 var count = 75;
 var qCounter = 0;
+var highscores = [];
 
 var questions =
     ["Commonly used types of data DO NOT include:"
@@ -78,7 +79,7 @@ function renderAnswers(num) {
 
 // checks if answer is correct and adds to score
 // Corrent Answers: 3 2 4 3 4
-// index array: 2 1 3 2 3
+// Data-Index: 2 1 3 2 3
 function checkAnswer(index) {
 
     var lineBreak = document.createElement("hr");
@@ -133,10 +134,12 @@ function renderEnterScore() {
     var text = document.createElement("label");
     var input = document.createElement("input");
     var submit = document.createElement("button");
+    highscores[highscores.length] = count;
+    console.log(highscores);
 
     text.textContent = "Enter initials:"
     question.textContent = "All done!";
-    details.textContent = "Your final score is " + count++ + "."; // count++ to stop score from ticking down 1 when enterScore renders
+    details.textContent = "Your final score is " + count + "."; // count++ to stop score from ticking down 1 when enterScore renders
     submit.textContent = "Submit";
 
     enterScore.appendChild(text);
@@ -148,13 +151,14 @@ function renderEnterScore() {
 function renderHighscore() {
 
     clearElements();
+    highscoresButton.style.display = 'none'; // hides highscores button after click
     var highscore = document.createElement("li");
     var goBack = document.createElement("button");
     var clearHighscore = document.createElement("button");
 
     question.textContent = "Highscores";
     details.textContent = "";
-    highscore.textContent = count;
+    highscore.textContent = count
     goBack.textContent = "Go Back";
     clearHighscore.textContent = "Clear Highscores";
 
@@ -163,6 +167,7 @@ function renderHighscore() {
     enterScore.appendChild(clearHighscore);
 }
 
+// Sets timer for quiz
 function timer() {
     var timeInterval = setInterval(function () {
         count--;
@@ -174,6 +179,18 @@ function timer() {
         }
 
     }, 1000)
+}
+
+function storeHighscore() {
+    localStorage.setItem("highscores", JSON.stringify(highscores));
+}
+
+function pullHighscores() {
+    var storedHighscores = JSON.parse(localStorage.getItem("highscores"));
+
+    if (storedHighscores !== null) {
+      highscores = storedHighscores;
+    }
 }
 
 // Check for answer button click
@@ -195,7 +212,6 @@ answerList.addEventListener("click", function (event) {
         renderEnterScore();
     }
 
-
 });
 
 // Checks button click for submitting a score, go back to the beginning, and clearing highscores
@@ -204,6 +220,7 @@ enterScore.addEventListener("click", function (event) {
     var element = event.target;
     if (element.matches("button") === true && element.textContent === "Submit") {
         renderHighscore();
+        storeHighscore();
     }
     else if (element.matches("button") === true && element.textContent === "Go Back") {
         location.reload();
@@ -222,11 +239,15 @@ startButton.addEventListener("click", function () {
     console.log(qCounter);
 });
 
+// Takes user to highscore list
 highscoresButton.addEventListener("click", function (event) {
 
     event.preventDefault();
-    startButton.style.display = 'none'; //hides atart button after click
+    pullHighscores();
+    startButton.style.display = 'none'; //hides start button after click
+    highscoresButton.style.display = 'none'; // hides highscores button after click
     renderHighscore();
+
 })
 
 
