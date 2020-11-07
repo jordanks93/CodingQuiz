@@ -55,9 +55,13 @@
   * hides start and highscores button after click
   
 ## Visual:
-![Default Page]()
+![Start Page](Images\startScreen.JPG)
 
-![Output Page]()
+![Question Page](Images\questionScreen.JPG)
+
+![Enter Score Page](Images\enterScoreScreen.JPG)
+
+![Highscore Page](Images\highscoresScreen.JPG)
 
 [Gitpages Link](https://jordanks93.github.io/CodingQuiz/)
 

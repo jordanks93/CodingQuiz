@@ -24,8 +24,8 @@ var answers3 = ["numbers and strings", "other arrays", "booleans", "all of the a
 var answers4 = ["commas", "curly brackets", "quotes", "parentheses"];
 var answers5 = ["Javascript", "terminal/ bash", "for loops", "console log"];
 
-// renders answers to the screen
-// checks the question number and pulls correct answer array to create list elements 
+// display answer buttons on the screen
+// checks the question number(qCounter) and pulls correct answer array (answers1..5) to create answer list elements
 function renderAnswers(num) {
 
     for (i = 0; i < answers1.length; i++) {
@@ -70,7 +70,7 @@ function renderAnswers(num) {
 }
 
 // checks if answer is correct and substracts from score if wrong
-// Corrent Answers: 3 2 4 3 4
+// corrent answers: 3 2 4 3 4
 // Data-Index: 2 1 3 2 3
 function checkAnswer(index) {
 
@@ -84,6 +84,7 @@ function checkAnswer(index) {
         showIfCorrect.appendChild(text);
     }
 
+    // subtract from score if answer is wrong
     else {
 
         text.textContent = "Incorrect";
@@ -93,7 +94,7 @@ function checkAnswer(index) {
     }
 }
 
-// Clears elements so page can be re-rendered
+// clears elements so page can be re-rendered
 function clearElements() {
 
     while (answerList.firstChild) {
@@ -107,15 +108,15 @@ function clearElements() {
     }
 }
 
-// Renders question based on number given
+// renders question based on number given
 function renderQuestion(qNum) {
-    //Clear default text
+    // clear default text
     details.textContent = "";
 
-    // Render question text from array
+    // render question text from array
     question.textContent = questions[qNum];
 
-    // Render answer text from array
+    // render answer text from array
     renderAnswers(qNum);
 }
 
@@ -137,7 +138,8 @@ function renderEnterScore() {
     enterScore.appendChild(submit);
 }
 
-// Creates page with list of highscores that can be cleared. Also has go back button to reset quiz
+// creates page with list of highscores that can be cleared
+// go back button to go to start screen
 function renderHighscore() {
     var goBack = document.createElement("button");
     var clearHighscore = document.createElement("button");
@@ -194,12 +196,12 @@ function pullHighscores() {
     }
 }
 
-// Check for answer button click
+// check for answer button click
 answerList.addEventListener("click", function (event) {
     var element = event.target;
     var index = element.parentElement.getAttribute("data-index");
 
-    // Answer click transitions to next question
+    // answer click transitions to next question
     if (element.matches("button") === true && qCounter < questions.length - 1) {
         qCounter++;
         clearElements();
@@ -208,7 +210,7 @@ answerList.addEventListener("click", function (event) {
         console.log(answerList);
     }
 
-    // Once user gets to last question, clicking asnswer will take user to enter score
+    // once user gets to last question, clicking asnswer will take user to enter score
     else if (element.matches("button") === true && qCounter < questions.length) {
         qCounter++;
         checkAnswer(index);
@@ -218,28 +220,28 @@ answerList.addEventListener("click", function (event) {
 
 });
 
-// Checks button click for submitting a score, go back (refresh), and clearing highscores
+// checks button click for submitting a score, go back (refresh), and clearing highscores
 enterScore.addEventListener("click", function (event) {
     var element = event.target;
 
-    // If user clicks submit, transition to highscore screen
+    // if user clicks submit, transition to highscore screen
     if (element.matches("button") === true && element.textContent === "Submit") {
         pullHighscores();
         renderHighscore();
     }
 
-    // If user clicks Go Back, reloads page
+    // if user clicks Go Back, reloads page
     else if (element.matches("button") === true && element.textContent === "Go Back") {
         location.reload();
     }
-    // If user clicks clear highscores, clears highscore list elements and clears local storage
+    // if user clicks clear highscores, clears highscore list elements and clears local storage
     else if (element.matches("button") === true && element.textContent === "Clear Highscores") {
         clearElements();
         localStorage.clear();
     }
 })
 
-// Start quiz
+// start quiz
 startButton.addEventListener("click", function () {
 
     count = 75;
@@ -249,7 +251,7 @@ startButton.addEventListener("click", function () {
 
 });
 
-// Takes user to highscore list
+// takes user to highscore list
 highscoresButton.addEventListener("click", function (event) {
 
     event.preventDefault();
