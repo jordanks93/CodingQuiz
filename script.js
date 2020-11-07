@@ -5,6 +5,7 @@ var answerList = document.querySelector("#answerList");
 var timer = document.querySelector("#timer")
 var highscoresButton = document.querySelector("#highscores")
 var enterScore = document.querySelector("#enterScore");
+var showIfCorrect = document.querySelector("#showIfCorrect");
 var count = 75;
 var qCounter = 0;
 
@@ -76,8 +77,27 @@ function renderAnswers(num) {
 }
 
 // checks if answer is correct and adds to score
-function checkAnswer() {
- 
+// Corrent Answers: 3 2 4 3 4
+// index array: 2 1 3 2 3
+function checkAnswer(index) {
+
+    var lineBreak = document.createElement("hr");
+    var text = document.createElement("p");
+
+    if ((qCounter === 1 && index == 2) || (qCounter === 2 && index == 1) || (qCounter === 3 && index == 3) || (qCounter === 4 && index == 2) || (qCounter === 5 && index == 3)) {
+        console.log("correct");
+        text.textContent = "Correct!";
+        showIfCorrect.appendChild(lineBreak);
+        showIfCorrect.appendChild(text);
+    }
+
+    else {
+        console.log("wrong");
+        text.textContent = "Incorrect";
+        showIfCorrect.appendChild(lineBreak);
+        showIfCorrect.appendChild(text);
+        count += -10;
+    }
 }
 
 // Clear answers and enter score elements to re-render the page
@@ -89,6 +109,9 @@ function clearElements() {
     while (enterScore.firstChild && enterScore.firstChild.textContent != "Go Back") {
         enterScore.removeChild(enterScore.firstChild);
     }
+    while (showIfCorrect.firstChild) {
+        showIfCorrect.removeChild(showIfCorrect.firstChild);
+    } 
 }
 
 // Renders question based on number given
@@ -124,6 +147,7 @@ function renderEnterScore() {
 // Creates page with list of highscores that can be cleared. Also has go back button to reset quiz
 function renderHighscore() {
 
+    clearElements();
     var highscore = document.createElement("li");
     var goBack = document.createElement("button");
     var clearHighscore = document.createElement("button");
@@ -142,14 +166,19 @@ function renderHighscore() {
 // Check for answer button click
 answerList.addEventListener("click", function (event) {
     var element = event.target;
+    var index = element.parentElement.getAttribute("data-index");
 
     if (element.matches("button") === true && qCounter < questions.length - 1) {
         qCounter++;
         clearElements();
         renderQuestion(qCounter);
+        checkAnswer(index);
         console.log(answerList);
     }
     else { 
+        qCounter++; 
+        checkAnswer(index);
+        clearElements();
         renderEnterScore(); 
     }
 
@@ -160,13 +189,12 @@ answerList.addEventListener("click", function (event) {
 enterScore.addEventListener("click", function (event) {
     var element = event.target;
     if (element.matches("button") === true && element.textContent === "Submit" ) {
-        clearElements();
         renderHighscore();
     }
-    if (element.matches("button") === true && element.textContent === "Go Back") {
+    else if (element.matches("button") === true && element.textContent === "Go Back") {
         location.reload();
     }
-    if (element.matches("button") === true && element.textContent === "Clear Highscores") {
+    else if (element.matches("button") === true && element.textContent === "Clear Highscores") {
         clearElements();
     }
 })
@@ -176,6 +204,7 @@ startButton.addEventListener("click", function () {
     timer.textContent += count;
     renderQuestion(0);
     startButton.style.display = 'none'; //hides atart button after click
+    console.log(qCounter);
 });
 
 
