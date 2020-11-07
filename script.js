@@ -6,7 +6,7 @@ var timeLeft = document.querySelector("#timeLeft")
 var highscoresButton = document.querySelector("#highscores")
 var enterScore = document.querySelector("#enterScore");
 var showIfCorrect = document.querySelector("#showIfCorrect");
-var count = 75;
+var count;
 var qCounter = 0;
 var highscores = [];
 
@@ -24,15 +24,8 @@ var answers3 = ["numbers and strings", "other arrays", "booleans", "all of the a
 var answers4 = ["commas", "curly brackets", "quotes", "parentheses"];
 var answers5 = ["Javascript", "terminal/ bash", "for loops", "console log"];
 
-
-// Click start button to begin quiz
-// A timer starts and a question is presented
-// Select answer
-// Present another question
-// Answer incorrectly, subtract seconds from timer
-// When all questions are answered or time = 0, game over
-// When game is over, can save initials and score
-
+// renders answers to the screen
+// checks the question number and pulls correct answer array to create list elements 
 function renderAnswers(num) {
 
     for (i = 0; i < answers1.length; i++) {
@@ -40,7 +33,7 @@ function renderAnswers(num) {
         var button = document.createElement("button");
         if (num === 0) {
             button.textContent = answers1[i];
-            li.setAttribute("data-index", i);
+            li.setAttribute("data-index", i); // attach attribute to each answer button to help determine if answer is correct later
 
             li.appendChild(button);
             answerList.appendChild(li);
@@ -74,10 +67,9 @@ function renderAnswers(num) {
             answerList.appendChild(li);
         }
     }
-    console.log(answerList.childElementCount);
 }
 
-// checks if answer is correct and adds to score
+// checks if answer is correct and substracts from score if wrong
 // Corrent Answers: 3 2 4 3 4
 // Data-Index: 2 1 3 2 3
 function checkAnswer(index) {
@@ -86,14 +78,14 @@ function checkAnswer(index) {
     var text = document.createElement("p");
 
     if ((qCounter === 1 && index == 2) || (qCounter === 2 && index == 1) || (qCounter === 3 && index == 3) || (qCounter === 4 && index == 2) || (qCounter === 5 && index == 3)) {
-        console.log("correct");
+
         text.textContent = "Correct!";
         showIfCorrect.appendChild(lineBreak);
         showIfCorrect.appendChild(text);
     }
 
     else {
-        console.log("wrong");
+
         text.textContent = "Incorrect";
         showIfCorrect.appendChild(lineBreak);
         showIfCorrect.appendChild(text);
@@ -101,7 +93,7 @@ function checkAnswer(index) {
     }
 }
 
-// Clear answers and enter score elements to re-render the page
+// Clears elements so page can be re-rendered
 function clearElements() {
 
     while (answerList.firstChild) {
@@ -134,12 +126,10 @@ function renderEnterScore() {
     var text = document.createElement("label");
     var input = document.createElement("input");
     var submit = document.createElement("button");
-    highscores[highscores.length] = count;
-    console.log(highscores);
 
     text.textContent = "Enter initials:"
     question.textContent = "All done!";
-    details.textContent = "Your final score is " + count + "."; // count++ to stop score from ticking down 1 when enterScore renders
+    details.textContent = "Your final score is " + count + ".";
     submit.textContent = "Submit";
 
     enterScore.appendChild(text);
@@ -149,20 +139,31 @@ function renderEnterScore() {
 
 // Creates page with list of highscores that can be cleared. Also has go back button to reset quiz
 function renderHighscore() {
-
-    clearElements();
-    highscoresButton.style.display = 'none'; // hides highscores button after click
-    var highscore = document.createElement("li");
     var goBack = document.createElement("button");
     var clearHighscore = document.createElement("button");
 
+    clearElements();
+    highscoresButton.style.display = 'none'; // hides highscores button after click
     question.textContent = "Highscores";
     details.textContent = "";
-    highscore.textContent = count
     goBack.textContent = "Go Back";
     clearHighscore.textContent = "Clear Highscores";
 
-    answerList.appendChild(highscore);
+    // make sure count has been defined before adding to the array
+    if (count != null) {
+        highscores[highscores.length] = count;
+    }
+
+    console.log(highscores);
+    storeHighscore();
+
+    for (i = 0; i < highscores.length; i++) {
+        var highscore = document.createElement("li");
+
+        highscore.textContent = highscores[i];
+
+        answerList.appendChild(highscore);
+    }
     enterScore.appendChild(goBack);
     enterScore.appendChild(clearHighscore);
 }
@@ -189,7 +190,7 @@ function pullHighscores() {
     var storedHighscores = JSON.parse(localStorage.getItem("highscores"));
 
     if (storedHighscores !== null) {
-      highscores = storedHighscores;
+        highscores = storedHighscores;
     }
 }
 
@@ -198,6 +199,7 @@ answerList.addEventListener("click", function (event) {
     var element = event.target;
     var index = element.parentElement.getAttribute("data-index");
 
+    // Answer click transitions to next question
     if (element.matches("button") === true && qCounter < questions.length - 1) {
         qCounter++;
         clearElements();
@@ -205,7 +207,9 @@ answerList.addEventListener("click", function (event) {
         checkAnswer(index);
         console.log(answerList);
     }
-    else if (qCounter < questions.length) {
+
+    // Once user gets to last question, clicking asnswer will take user to enter score
+    else if (element.matches("button") === true && qCounter < questions.length) {
         qCounter++;
         checkAnswer(index);
         clearElements();
@@ -214,29 +218,35 @@ answerList.addEventListener("click", function (event) {
 
 });
 
-// Checks button click for submitting a score, go back to the beginning, and clearing highscores
+// Checks button click for submitting a score, go back (refresh), and clearing highscores
 enterScore.addEventListener("click", function (event) {
-
     var element = event.target;
+
+    // If user clicks submit, transition to highscore screen
     if (element.matches("button") === true && element.textContent === "Submit") {
+        pullHighscores();
         renderHighscore();
-        storeHighscore();
     }
+
+    // If user clicks Go Back, reloads page
     else if (element.matches("button") === true && element.textContent === "Go Back") {
         location.reload();
     }
+    // If user clicks clear highscores, clears highscore list elements and clears local storage
     else if (element.matches("button") === true && element.textContent === "Clear Highscores") {
         clearElements();
+        localStorage.clear();
     }
 })
 
 // Start quiz
 startButton.addEventListener("click", function () {
 
+    count = 75;
     renderQuestion(0);
     timer();
     startButton.style.display = 'none'; //hides atart button after click
-    console.log(qCounter);
+
 });
 
 // Takes user to highscore list
@@ -251,9 +261,6 @@ highscoresButton.addEventListener("click", function (event) {
 })
 
 
-
-
-console.log(question.textContent);
 
 
 
